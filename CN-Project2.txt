@@ -1,0 +1,22 @@
+File owner:
+1. read file, separate file into 100KB chunks (the file has to be more than 500 KB)
+2. arraylist<bytes[12510]> id starts at 0
+3. host a tcp connection (multiple thread)
+4. append "end " to the last peer
+
+peer:
+1. connect to tcp and receive package, after received create a folder called <my_port> and then store all chunks into seprated file, host a tcp listening, if received pakcage has "end" then connect to download neiborghr, and send the last package id it received , otherwise, connect to download neiborgbor only when it receive connection from upload neighbor
+
+2. every thread stores a last package id of all threads. 
+
+2. deal with id problem hashmap<id, local address of the chunk(file)>.
+
+3. write two thread:
+	download: send require for id map, compare received id map with own map, randomly choose one from the missing id, send the id to download neightbor, receive the chunks, upload own map, write the chunk down into local file
+	when it is closed? after the map.size() ==  last package id + 1, then send "close" to download and then close its download tcp
+
+	upload: receive request for id map, send id map, receive id, send id of chunk., after receive "close", close its upload thread
+
+4. command: peer file_owner_ip file_owner_port download_port upload_port my_port
+
+5.While() to check whether the neiborhter is ready, if not thread.sleep(5) second to retry
